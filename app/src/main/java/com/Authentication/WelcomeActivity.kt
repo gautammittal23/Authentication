@@ -1,7 +1,7 @@
-package com.fingerprintauth
+package com.Authentication
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 
 class WelcomeActivity : AppCompatActivity() {
 

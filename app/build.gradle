@@ -9,7 +9,7 @@ android {
     buildToolsVersion "29.0.2"
     defaultConfig {
         applicationId "com.fingerprintauth"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -35,5 +35,5 @@ dependencies {
 
     // for FingerPrint Auth
 
-    implementation 'androidx.biometric:biometric:1.0.0-alpha03'
+    implementation 'androidx.biometric:biometric:1.0.1'
 }
