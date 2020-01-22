@@ -24,9 +24,10 @@ class MainActivity : AppCompatActivity() {
         // calling fingerAuth Function
 //         fingerAuth()
 
-        // pinAndPattern()
-
-        authenticateApp()
+        
+        // Pin or Pattern Auth Function
+        
+        pinPatternAuthenticateApp()
 
     }
 
@@ -107,29 +108,10 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    fun pinAndPattern() {
-        val keyguardManager =
-            getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-
-
-
-        return if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) && keyguardManager.isKeyguardSecure) {
-            val i = keyguardManager.createConfirmDeviceCredentialIntent(
-                "Unlock",
-                "Enter your Credentials"
-            )
-            startActivityForResult(i, 100)
-
-        } else {
-
-        }
-
-
-    }
 
 
     //method to authenticate app
-    private fun authenticateApp() { //Get the instance of KeyGuardManager
+    private fun pinPatternAuthenticateApp() { //Get the instance of KeyGuardManager
         val keyguardManager =
             getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
         //Check if the device version is greater than or equal to Lollipop(21)
