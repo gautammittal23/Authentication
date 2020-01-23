@@ -4,10 +4,9 @@ import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
-import android.hardware.fingerprint.FingerprintManager
-import android.os.Build
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
+import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.fragment.app.FragmentActivity
 import java.util.concurrent.Executors
@@ -24,6 +23,13 @@ class AuthenticationManager {
         fun isNegativeButtonClicked(errorCode: Int) =
             errorCode == BiometricPrompt.ERROR_NEGATIVE_BUTTON
 
+
+        fun noFingerprintScanner(errorCode: Int): Boolean {
+            return (errorCode == BiometricPrompt.ERROR_HW_NOT_PRESENT)
+        }
+
+
+
     }
 
     lateinit var callback: BiometricCallback
@@ -34,16 +40,21 @@ class AuthenticationManager {
 
     private val mExecutor by lazy { Executors.newSingleThreadExecutor() }
 
+
     fun fingerprintScannerExist(context: Context): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) { //Fingerprint API only available on from Android 6.0 (M)
-            val fingerprintManager =
-                context.getSystemService(Context.FINGERPRINT_SERVICE) as FingerprintManager
-            return fingerprintManager.isHardwareDetected && fingerprintManager.hasEnrolledFingerprints()
-        } else {
-            return false
 
+        val biometricManager = BiometricManager.from(context)
+        when (biometricManager.canAuthenticate()) {
+            BiometricManager.BIOMETRIC_SUCCESS ->
+                return true
+            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE ->
+                return false
+            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE ->
+                return false
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED ->
+                return false
         }
-
+        return true
     }
 
     fun createBiometricPromptInfo(
@@ -82,7 +93,6 @@ class AuthenticationManager {
                     super.onAuthenticationFailed()
                     callback.onBioAuthenticationFailed()
                 }
-
             })
 
         biometricPrompt.authenticate(biometricPromptInfo)

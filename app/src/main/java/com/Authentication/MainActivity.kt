@@ -17,7 +17,7 @@ class MainActivity : AppCompatActivity(), AuthenticationManager.BiometricCallbac
 
         authManager.setAuthCallback(this)
 
-        if (authManager.fingerprintScannerExist(this@MainActivity)) {
+        if (authManager.fingerprintScannerExist(this)) {
             authManager.initBiometricVerification(
                 this,
                 authManager.createBiometricPromptInfo()
@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity(), AuthenticationManager.BiometricCallbac
             showToast("onBioAuthenticationFailed")
         }
         finish()
+        System.exit(0)
 
     }
 
@@ -55,11 +56,10 @@ class MainActivity : AppCompatActivity(), AuthenticationManager.BiometricCallbac
     override fun onBioAuthenticationError(errorCode: Int, errString: CharSequence) {
         runOnUiThread {
             showToast("onBioAuthenticationError")
+            finish()
+            System.exit(0)
         }
 
-        if (AuthenticationManager.isNegativeButtonClicked(errorCode)) {
-            finish()
-        }
     }
 
     override fun onKeyGuardSuccess() {
@@ -69,8 +69,9 @@ class MainActivity : AppCompatActivity(), AuthenticationManager.BiometricCallbac
     }
 
     override fun onKeyGuardFailure() {
-        finish()
         showToast("onKeyGuardFailure")
+        finish()
+        System.exit(0)
     }
 
 
