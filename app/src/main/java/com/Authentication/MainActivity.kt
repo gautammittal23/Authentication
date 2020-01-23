@@ -22,6 +22,7 @@ class MainActivity : AppCompatActivity(), AuthenticationManager.BiometricCallbac
 
         authManager.setAuthCallback(this)
 
+<<<<<<< HEAD
         if (authManager.fingerprintScannerExist(this)) {
             authManager.initBiometricVerification(
                 this,
@@ -31,6 +32,15 @@ class MainActivity : AppCompatActivity(), AuthenticationManager.BiometricCallbac
             authManager.startActivityForKeyGuard(this, authManager.createKeyguardIntent(this))
         }
 
+=======
+        // calling fingerAuth Function
+//         fingerAuth()
+
+        
+        // Pin or Pattern Auth Function
+        
+        pinPatternAuthenticateApp()
+>>>>>>> e1a79dbd3f1d55bacafff20df3dfa71c94152211
 
     }
 
@@ -81,6 +91,7 @@ class MainActivity : AppCompatActivity(), AuthenticationManager.BiometricCallbac
     }
 
 
+<<<<<<< HEAD
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         authManager.onActivityResult(requestCode, resultCode, data)
@@ -95,6 +106,8 @@ class MainActivity : AppCompatActivity(), AuthenticationManager.BiometricCallbac
         System.exit(0)
 
     }
+=======
+>>>>>>> e1a79dbd3f1d55bacafff20df3dfa71c94152211
 
     override fun onBioAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
         runOnUiThread {
@@ -104,11 +117,33 @@ class MainActivity : AppCompatActivity(), AuthenticationManager.BiometricCallbac
         startActivity(Intent(this@MainActivity, WelcomeActivity::class.java))
     }
 
+<<<<<<< HEAD
     override fun onBioAuthenticationError(errorCode: Int, errString: CharSequence) {
         runOnUiThread {
             showToast("onBioAuthenticationError")
             finish()
             System.exit(0)
+=======
+    //method to authenticate app
+    private fun pinPatternAuthenticateApp() { //Get the instance of KeyGuardManager
+        val keyguardManager =
+            getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
+        //Check if the device version is greater than or equal to Lollipop(21)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //Create an intent to open device screen lock screen to authenticate
+//Pass the Screen Lock screen Title and Description
+            val i = keyguardManager.createConfirmDeviceCredentialIntent("Unlock", "Enter your Auth")
+            try { //Start activity for result
+                startActivityForResult(i, 100)
+            } catch (e: Exception) { //If some exception occurs means Screen lock is not set up please set screen lock
+//Open Security screen directly to enable patter lock
+                val intent = Intent(Settings.ACTION_SECURITY_SETTINGS)
+                try { //Start activity for result
+                    startActivityForResult(intent, 101)
+                } catch (ex: Exception) { //If app is unable to find any Security settings then user has to set screen lock manually
+
+                }
+            }
+>>>>>>> e1a79dbd3f1d55bacafff20df3dfa71c94152211
         }
 
     }
