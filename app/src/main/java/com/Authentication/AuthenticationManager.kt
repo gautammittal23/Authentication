@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.KeyguardManager
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricManager
@@ -44,6 +45,7 @@ class AuthenticationManager {
     fun fingerprintScannerExist(context: Context): Boolean {
 
         val biometricManager = BiometricManager.from(context)
+
         when (biometricManager.canAuthenticate()) {
             BiometricManager.BIOMETRIC_SUCCESS ->
                 return true
@@ -67,6 +69,19 @@ class AuthenticationManager {
             .setSubtitle(subtitle)
             .setNegativeButtonText(negativeButtonText)
             .build()
+
+
+/*
+        // Set builder flags introduced in Q.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            builder.setConfirmationRequired(
+                mBundle.getBoolean(
+                    BiometricPrompt.KEY_REQUIRE_CONFIRMATION,
+                    true
+                )
+            )
+            builder.setDeviceCredentialAllowed(allowDeviceCredential)
+        }*/
     }
 
     fun initBiometricVerification(
@@ -116,9 +131,16 @@ class AuthenticationManager {
         title: String = "Unlock",
         description: String = "Enter your Auth"
     ): Intent {
+
+
+
         val keyguardManager =
             context.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager
-        return keyguardManager.createConfirmDeviceCredentialIntent(title, description)
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            keyguardManager.createConfirmDeviceCredentialIntent(title, description)
+        } else {
+            TODO("VERSION.SDK_INT < LOLLIPOP")
+        }
     }
 
     fun startActivityForKeyGuard(a: Activity, i: Intent) {

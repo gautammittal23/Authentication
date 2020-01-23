@@ -1,9 +1,14 @@
 package com.Authentication
 
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.os.CancellationSignal
+import android.text.TextUtils
 import androidx.appcompat.app.AppCompatActivity
+import androidx.biometric.BiometricFragment
 import androidx.biometric.BiometricPrompt
+import java.security.AccessController.getContext
 
 
 class MainActivity : AppCompatActivity(), AuthenticationManager.BiometricCallback {
@@ -27,6 +32,52 @@ class MainActivity : AppCompatActivity(), AuthenticationManager.BiometricCallbac
         }
 
 
+    }
+
+
+
+
+    fun pinpassword()
+    {
+        val builder =
+            android.hardware.biometrics.BiometricPrompt.Builder(baseContext)
+        builder.setTitle("")
+            .setSubtitle("").setDeviceCredentialAllowed(true)
+
+        // Set builder flags introduced in Q.
+        // Set builder flags introduced in Q.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            builder.setConfirmationRequired(
+                mBundle.getBoolean(
+                    BiometricPrompt.KEY_REQUIRE_CONFIRMATION,
+                    true
+                )
+            )
+            builder.setDeviceCredentialAllowed(allowDeviceCredential)
+        }
+
+        if (allowDeviceCredential) {
+            mStartRespectingCancel = false
+            mHandler.postDelayed(Runnable {
+                // Hack almost over 9000, ignore cancel signal if it's within the first
+                // quarter second.
+                mStartRespectingCancel = true
+            }, 250 /* ms */)
+        }
+
+        mBiometricPrompt = builder.build()
+        mCancellationSignal = CancellationSignal()
+        if (mCryptoObject == null) {
+            mBiometricPrompt.authenticate(
+                mCancellationSignal, mExecutor,
+                mAuthenticationCallback
+            )
+        } else {
+            mBiometricPrompt.authenticate(
+                BiometricFragment.wrapCryptoObject(mCryptoObject), mCancellationSignal,
+                mExecutor, mAuthenticationCallback
+            )
+        }
     }
 
 
